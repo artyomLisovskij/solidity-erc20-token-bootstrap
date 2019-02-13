@@ -1,32 +1,47 @@
-pragma solidity ^0.4.11;
+pragma solidity ^0.5.2;
 
-//------------------------------------------------------------------------------------------------
-// ERC20 Standard Token Implementation, based on ERC Standard:
-// https://github.com/ethereum/EIPs/issues/20
-// With some inspiration from ConsenSys HumanStandardToken as well
-// Copyright 2017 BattleDrome
-//------------------------------------------------------------------------------------------------
+library SafeMath {
 
-//------------------------------------------------------------------------------------------------
-// LICENSE
-//
-// This file is part of BattleDrome.
-// 
-// BattleDrome is free software: you can redistribute it and/or modify
-// it under the terms of the GNU General Public License as published by
-// the Free Software Foundation, either version 3 of the License, or
-// (at your option) any later version.
-// 
-// BattleDrome is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-// GNU General Public License for more details.
-// 
-// You should have received a copy of the GNU General Public License
-// along with BattleDrome.  If not, see <http://www.gnu.org/licenses/>.
-//------------------------------------------------------------------------------------------------
+    function mul(uint256 a, uint256 b) internal pure returns (uint256) {
+        if (a == 0) {
+            return 0;
+        }
+
+        uint256 c = a * b;
+        require(c / a == b);
+
+        return c;
+    }
+
+    function div(uint256 a, uint256 b) internal pure returns (uint256) {
+        require(b > 0);
+        uint256 c = a / b;
+        
+	return c;
+    }
+
+    function sub(uint256 a, uint256 b) internal pure returns (uint256) {
+        require(b <= a);
+        uint256 c = a - b;
+
+        return c;
+    }
+
+    function add(uint256 a, uint256 b) internal pure returns (uint256) {
+        uint256 c = a + b;
+        require(c >= a);
+
+        return c;
+    }
+
+    function mod(uint256 a, uint256 b) internal pure returns (uint256) {
+        require(b != 0);
+        return a % b;
+    }
+}
 
 contract ERC20Standard {
+	using SafeMath for uint256;
 	uint public totalSupply;
 	
 	string public name;
@@ -48,19 +63,19 @@ contract ERC20Standard {
 	}
 
 	function transfer(address _recipient, uint _value) onlyPayloadSize(2*32) {
-		require(balances[msg.sender] >= _value && _value > 0);
-	    balances[msg.sender] -= _value;
-	    balances[_recipient] += _value;
+	    require(balances[msg.sender] >= _value && _value > 0);
+	    balances[msg.sender].sub(_value);
+	    balances[_recipient].add(_value);
 	    Transfer(msg.sender, _recipient, _value);        
-    }
+        }
 
 	function transferFrom(address _from, address _to, uint _value) {
-		require(balances[_from] >= _value && allowed[_from][msg.sender] >= _value && _value > 0);
-        balances[_to] += _value;
-        balances[_from] -= _value;
-        allowed[_from][msg.sender] -= _value;
-        Transfer(_from, _to, _value);
-    }
+	    require(balances[_from] >= _value && allowed[_from][msg.sender] >= _value && _value > 0);
+            balances[_to].add(_value);
+            balances[_from].sub(_value);
+            allowed[_from][msg.sender].sub(_value);
+            Transfer(_from, _to, _value);
+        }
 
 	function approve(address _spender, uint _value) {
 		allowed[msg.sender][_spender] = _value;
