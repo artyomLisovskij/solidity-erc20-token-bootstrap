@@ -64,16 +64,16 @@ contract ERC20Standard {
 
 	function transfer(address _recipient, uint _value) public onlyPayloadSize(2*32) {
 	    require(balances[msg.sender] >= _value && _value > 0);
-	    balances[msg.sender].sub(_value);
-	    balances[_recipient].add(_value);
+	    balances[msg.sender] = balances[msg.sender].sub(_value);
+	    balances[_recipient] = balances[_recipient].add(_value);
 	    emit Transfer(msg.sender, _recipient, _value);        
         }
 
 	function transferFrom(address _from, address _to, uint _value) public {
 	    require(balances[_from] >= _value && allowed[_from][msg.sender] >= _value && _value > 0);
-            balances[_to].add(_value);
-            balances[_from].sub(_value);
-            allowed[_from][msg.sender].sub(_value);
+            balances[_to] = balances[_to].add(_value);
+            balances[_from] = balances[_from].sub(_value);
+            allowed[_from][msg.sender] = allowed[_from][msg.sender].sub(_value);
             emit Transfer(_from, _to, _value);
         }
 
