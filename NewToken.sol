@@ -3,7 +3,7 @@ pragma solidity ^0.5.7;
 import "./ERC20Standard.sol";
 
 contract NewToken is ERC20Standard {
-	function NewToken() {
+	constructor() public {
 		totalSupply = 123;
 		name = "Best ever coin";
 		decimals = 4;
